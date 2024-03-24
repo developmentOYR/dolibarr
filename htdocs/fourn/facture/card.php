@@ -237,6 +237,18 @@ if (empty($reshook)) {
 
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
+				$object→fechObjectLinked(); //I load all items associated with that invoice.
+				if(array_key_exists(“order_supplier”,$object→linkedObjects)){
+					$linkedObjectBlock=$object→linkedObjects[“order_supplier”];
+					//I check that there only one order associated with an invoice because when there are several orders associated with an invoice, it is done correctly.
+					if(count($linkedObjectBlock)==1){
+						//In case that there is only one order associated with an invoice, I go through all the elements associated with the invoice of type “order_supplier” and I classify that order using the "ClassifyBilled" method.
+						foreach($linkedObjectBlock as $key =>$objectlink){
+							$objectlink->classifyBilled($user);
+						}
+					}
+				}
+				
 				$db->commit();
 
 				// Define output language
